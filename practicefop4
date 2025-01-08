@@ -1,0 +1,13 @@
+class Book:  #blueprint for all other books in the library
+    def __init__(self,title,author,isbn):
+        self.title = title
+        self.author = author
+        self.isbn = isbn
+        self.is_borrowed = False
+
+book1 =Book("Python Crash Course", "Eric Matthes", "1593279280")
+book2= Book("Automate the Boring Stuff with Python", "Al Sweigart", "1593279922")
+book3= Book("Effective Java", "Joshua Bloch", "0134685997")
+book4 = Book("The Pragmatic Programmer", "Andrew Hunt and David Thomas", "0135957052")
+book5 = Book("Learn Java", "Jane Doe", "9876543210")
+print(book1)
