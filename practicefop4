@@ -42,23 +42,30 @@ class Library:
         for book in self.books:
             print(book) 
 
-   
-    def borrow_book(self, isbn):
+   def borrow_book(self):   # change to make sure user that borrowed book is returning it
+        isbn = input("Enter the ISBN of the book you want to borrow:")
+        user_id = input("Enter your user ID:")
+        if user_id not in self.users:
+            print("User not found")
+            return
         for book in self.books:    #check if book is in library
-            if book.isbn ==isbn and not book.is_borrowed:    #check if book has been borowwed
+            if book.isbn ==isbn and not book.is_borrowed:    
                 book.is_borrowed = True
-                print(f"You've borowwed '{book.title}'.")
+                book.borrowed_by = user_id
+                print(f"User:  '{user_id} has borrowed '{book.title}'.")
                 return
-        print('Book is not avaliable or has been borowwed.')
-
-
-def return_book(self, isbn):
+        print('Book is not avaliable or has already been borrowed.')
+ 
+    def return_book(self):
+        isbn = input("Enter the ISBN of the book you want to return:")
+        user_id = input("Enter your user ID:")
         for book in self.books:
-            if book.isbn ==isbn and book.is_borrowed:
+            if book.isbn ==isbn and book.is_borrowed and book.borrowed_by == user_id:
                 book.is_borrowed = False
-                print(f"You have returned '{book.title}'")
+                book.borrowed_by = None
+                print(f"User {self.users[user_id].name} have returned '{book.title}'")
                 return
-            print('Book is not avaliable or has not been borowwed.'
+            print('Book is not avaliable or has not been borowwed.Or had not been borrowed by this user.')
 
 
     def add_user(self):
