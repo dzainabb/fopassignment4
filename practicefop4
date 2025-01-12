@@ -1,16 +1,141 @@
+
 class Book:  #blueprint for all other books in the library
     def __init__(self,title,author,isbn):
         self.title = title
         self.author = author
         self.isbn = isbn
         self.is_borrowed = False
+        self.borrowed_by = None
 
-book1 =Book("Python Crash Course", "Eric Matthes", "1593279280")
-book2= Book("Automate the Boring Stuff with Python", "Al Sweigart", "1593279922")
-book3= Book("Effective Java", "Joshua Bloch", "0134685997")
-book4 = Book("The Pragmatic Programmer", "Andrew Hunt and David Thomas", "0135957052")
-book5 = Book("Learn Java", "Jane Doe", "9876543210")
-print(book1)
-print('hello')
+    def __str__(self):
+        borrowed_status = f"Yes, by {self.borrowed_by}" if self.is_borrowed else "No"
+        return(f"Title: {self.title}\n"
+               f"Author: {self.author}\n"
+               f"IBSN: {self.isbn}\n"
+               f"Borowwed: {borrowed_status}")
+    
+class User:
+    def __init__(self, user_id,name,email):
+        self.user_id = user_id
+        self.name = name
+        self.email = email
+
+    def __str__(self):
+        return f"User ID : {self.user_id}, Name: {self.name}, Email: {self.email}"
+    
+class Library:
+    def __init__(self):
+        self.books = []
+        self.users = {} 
+
+    def add_book(self):
+        title = input("Enter title:")
+        author = input("Enter the author's name:")
+        isbn = input("Enter the book's ISBN:")
+        book = Book(title,author,isbn)
+        self.books.append(book)
+        print (f"Book : '{book.title}' has been added to the library.\n")
+    
+    def list_books(self):
+        if not self.books:
+            print("No books are in the library")
+        for book in self.books:
+            print(book) 
+
+   
+    def borrow_book(self, isbn):
+        for book in self.books:    #check if book is in library
+            if book.isbn ==isbn and not book.is_borrowed:    #check if book has been borowwed
+                book.is_borrowed = True
+                print(f"You've borowwed '{book.title}'.")
+                return
+        print('Book is not avaliable or has been borowwed.')
+
+
+def return_book(self, isbn):
+        for book in self.books:
+            if book.isbn ==isbn and book.is_borrowed:
+                book.is_borrowed = False
+                print(f"You have returned '{book.title}'")
+                return
+            print('Book is not avaliable or has not been borowwed.'
+
+
+    def add_user(self):
+        user_id = input("Enter User ID:")
+        name = input("Enter user name:")
+        email = input("Enter user email:")
+        if user.user_id in self.users:
+            print(f"User ID {self.user_id} already exists.")
+            return
+        user = User(user_id,name,email)
+        self.users[user.user_id] = user
+        print(f"User '{user.name} added with ID {user.user_id}.")
+
+    def list_users(self):
+        if not self.users:
+            print('No users registered')
+            return
+        for user_id, user in self.users.items():
+            print(user)
+
+    def update_user(self):
+        user_id = input("Enter user ID to update:")
+        if user_id not in self.users:
+            print("User not found")
+            return
+        name = input("Enter new name (leave blank to keep current name):")
+        email = input("Enter new email (leave blank to keep current email):")
+        if name:
+            self.users[user_id].name = name
+        if email:
+            self.users[user_id].email = email
+        print(f"User '{user_id}' updated.")
+    
+     
+    def delete_user(self, user_id):
+        user_id = input("ENter user ID to delete:")
+        if user_id in self.users:
+            del self.users[user_id]
+            print(f'User {user_id} has been deleted.')
+        else:
+            print("User not found")
+def menu():
+    library = Library()
+    while True:
+        print("****Library Menu:****")
+        print("1. Add a book")   
+        print("2. List all books")    
+        print("3. Borrow a book")   
+        print("4. Return a book")   
+        print("5. Add users")
+        print("6. List all users")
+        print("7. Update users")
+        print("8. Delete users")
+        print("9. Exit")
+        ans = input("Choose one (enter a number 1-9):")
+        if ans == '1':
+            library.add_book()
+        elif ans== '2':
+            library.list_books()
+        elif ans =='3':
+            library.borrow_book()
+        elif ans =='4':
+            library.return_book()
+        elif ans == '5':
+            library.add_user()
+        elif ans == '6':
+            library.update_user_user()
+        elif ans == '7':
+            library.list_users()
+        elif ans == '8':
+            library.delete_user()
+        elif ans == '9':
+            print('Goodbye')
+            break
+        else:
+            print("Invalid choice, please try again")
+
+menu()
 
 
