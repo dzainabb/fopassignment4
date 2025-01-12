@@ -1,5 +1,4 @@
-#used library collection manager to adapt this one
-
+# allows me to chose players to add to team
 class Player:
     def __init__(self, player_id, name, role, country):
         self.player_id = player_id
@@ -16,6 +15,7 @@ class Player:
                 f"Country: {self.country}\n"
                 f"Status: {status}")
 
+
 class Team:
     def __init__(self, manager, team_name, league):
         self.manager = manager
@@ -23,9 +23,17 @@ class Team:
         self.league = league
         self.players = []
 
-    def __str__(self):
-        return f"Manger Name: {self.manager}, Team Name: {self.team_name}, League: {self.league}"
+    def add_player(self,player):
+        self.players.append(player)
+        
+    def remove_player(self,player_id):
+        self.players = [player for player in self.players if player.player_id!= player_id]    #make sure player_id is that of player we want to remove from the to team
 
+    def __str__(self):
+        return (f"Manager Name: {self.manager}\n"
+               f"Team Name: {self.team_name}\n"
+               f"League: {self.league}\n"
+               f"Players: {[player.name for player in self.players]}")
 
 class CricketCollection:
     def __init__(self):
@@ -89,68 +97,98 @@ class CricketCollection:
         if not self.teams:
             print("No teams in the collection.\n")
         else:
-            for team in self.teams.items():
+            for team in self.teams.values():
                 print(team)
 
-    def update_team(self):
-        manager = input("Enter manager's name to update: ")
+
+    def assign_player_to_team(self):
+        manager = input("Enter the manager name to assign a player: ")
         if manager not in self.teams:
             print("Team not found.\n")
             return
-        team_name = input(f"Enter new team name (current: {self.teams[manager].team_name}) or leave blank: ")
-        league = input(f"Enter new league (current: {self.teams[manager].league}) or leave blank: ")
-        if team_name:
-            self.teams[manager].team_name = team_name
-        if league:
-            self.teams[manager].league = league
-        print(f" '{manager}'s' team has been updated.\n")
 
-    def delete_team(self):
-        manager = input("Enter manager name to delete: ")
-        if manager in self.teams:
-            del self.teams[manager]
-            print(f" Team managed by '{manager}' has been deleted.\n")
+        player_id = input("Enter the Player ID to assign: ")
+        player = next((p for p in self.players if p.player_id == player_id and p.is_active), None)
+        if not player:
+            print("Player not found or inactive.\n")
+            return
+
+        team = self.teams[manager]
+        if player in team.players:
+            print(f"Player '{player.name}' is already in the team '{manager}'.\n")
         else:
+            team.add_player(player)
+            print(f"Player '{player.name}' has been assigned to team '{manager}'.\n")
+
+    def list_team_players(self):
+        manager = input("Enter the manager name to list its players: ")
+        if manager not in self.teams:
             print("Team not found.\n")
+            return
 
-
-def menu():
-    collection = CricketCollection()
-    while True:
-        print("\n**** Cricket Collection Manager ****")
-        print("1. Add a player")
-        print("2. List all players")
-        print("3. Update a player")
-        print("4. Deactivate a player")
-        print("5. Add a team")
-        print("6. List all teams")
-        print("7. Update a team")
-        print("8. Delete a team")
-        print("9. Exit\n")
-        choice = input("Choose an option (1-9): ")
-
-        if choice == '1':
-            collection.add_player()
-        elif choice == '2':
-            collection.list_players()
-        elif choice == '3':
-            collection.update_player()
-        elif choice == '4':
-            collection.deactivate_player()
-        elif choice == '5':
-            collection.add_team()
-        elif choice == '6':
-            collection.list_team()
-        elif choice == '7':
-            collection.update_team()
-        elif choice == '8':
-            collection.delete_team()
-        elif choice == '9':
-            print("Goodbye!")
-            break
+        team = self.teams[manager]
+        if not team.players:
+            print(f"Team '{team.team_namw}' has no players assigned.\n")
         else:
-            print("Invalid choice. Please try again.\n")
+            print(f"Players in team '{team.team_name}':")
+            for player in team.players:
+                print(player)
+
+    def remove_player_from_team(self):
+        manager = input("Enter the team name to remove a player from: ")
+        if manager not in self.teams:
+            print("Team not found.\n")
+            return
+
+        player_id = input("Enter the Player ID to remove: ")
+        team = self.teams[manager]
+        if any(player.player_id == player_id for player in team.players):
+            team.remove_player(player_id)
+            print(f"Player with ID '{player_id}' has been removed from team '{team.team_name}'.\n")
+        else:
+            print(f"Player with ID '{player_id}' not found in team '{team.team_name}'.\n")
+        
+
+    def menu(self):
+        while True:
+            print("\n**** Cricket Collection Manager ****")
+            print("1. Add a Player")
+            print("2. List All Players")
+            print("3. Update a Player")
+            print("4. Deactivate a Player")
+            print("5. Add a Team")
+            print("6. List All Teams")
+            print("7. Assign a Player to a Team")
+            print("8. List Players in a Team")
+            print("9. Remove a Player from a Team")
+            print("10. Exit\n")
+            choice = input("Choose an option (1-10): ")
+
+            if choice == '1':
+                self.add_player()
+            elif choice == '2':
+                self.list_players()
+            elif choice == '3':
+                self.update_player()
+            elif choice == '4':
+                self.deactivate_player()
+            elif choice == '5':
+                self.add_team()
+            elif choice == '6':
+                self.list_team()
+            elif choice == '7':
+                self.assign_player_to_team()
+            elif choice == '8':
+                self.list_team_players()
+            elif choice == '9':
+                self.remove_player_from_team()
+            elif choice == '10':
+                print("Goodbye!")
+                break
+            else:
+                print("Invalid choice. Please try again.\n")
 
 
 # Run the menu
-menu()
+collection = CricketCollection()
+collection.menu()
