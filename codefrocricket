@@ -1,0 +1,156 @@
+#used library collection manager to adapt this one
+
+class Player:
+    def __init__(self, player_id, name, role, country):
+        self.player_id = player_id
+        self.name = name
+        self.role = role  # Example roles: Batsman, Bowler, All-rounder, Wicketkeeper
+        self.country = country
+        self.is_active = True
+
+    def __str__(self):
+        status = "Active" if self.is_active else "Inactive"
+        return (f"Player ID: {self.player_id}\n"
+                f"Name: {self.name}\n"
+                f"Role: {self.role}\n"
+                f"Country: {self.country}\n"
+                f"Status: {status}")
+
+class Team:
+    def __init__(self, manager, team_name, league):
+        self.manager = manager
+        self.team_name = team_name
+        self.league = league
+        self.players = []
+
+    def __str__(self):
+        return f"Manger Name: {self.manager}, Team Name: {self.team_name}, League: {self.league}"
+
+
+class CricketCollection:
+    def __init__(self):
+        self.players = []
+        self.teams = {}
+
+    def add_player(self):
+        player_id = input("Enter Player ID: ")
+        name = input("Enter Player Name: ")
+        role = input("Enter Player Role (e.g., Batsman, Bowler, All-rounder): ")
+        country = input("Enter country of origin: ")
+        player = Player(player_id, name, role, country)
+        self.players.append(player)
+        print(f"Player '{name}' has been added to the collection.\n")
+
+    def list_players(self):
+        if not self.players:
+            print("No players in the collection.\n")
+        else:
+            for player in self.players:
+                print(player)
+
+    def update_player(self):
+        player_id = input("Enter Player ID to update: ")
+        for player in self.players:
+            if player.player_id == player_id:
+                name = input(f"Enter new name (current: {player.name}) or leave blank: ")
+                role = input(f"Enter new role (current: {player.role}) or leave blank: ")
+                country = input(f"Enter new country (current: {player.country}) or leave blank: ")
+                if name:
+                    player.name = name
+                if role:
+                    player.role = role
+                if country:
+                    player.country = country
+                print(f"Player '{player_id}' has been updated.\n")
+                return
+        print("Player not found.\n")
+
+    def deactivate_player(self):
+        player_id = input("Enter Player ID to deactivate: ")
+        for player in self.players:
+            if player.player_id == player_id and player.is_active:
+                player.is_active = False
+                print(f"Player '{player.name}' has been deactivated.\n")
+                return
+        print("Player not found or already inactive.\n")
+
+    def add_team(self):
+        manager = input("Enter Manager name: ")
+        team_name = input("Enter team name: ")
+        league = input("Enter league: ")
+        if manager in self.teams:
+            print(f"Manager: '{manager}' already has team.\n")
+            return
+        team = Team(manager, team_name, league)
+        self.teams[manager] = team
+        print(f" Team '{team_name}' has been added.\n")
+
+    def list_team(self):
+        if not self.teams:
+            print("No teams in the collection.\n")
+        else:
+            for team in self.teams.items():
+                print(team)
+
+    def update_team(self):
+        manager = input("Enter manager's name to update: ")
+        if manager not in self.teams:
+            print("Team not found.\n")
+            return
+        team_name = input(f"Enter new team name (current: {self.teams[manager].team_name}) or leave blank: ")
+        league = input(f"Enter new league (current: {self.teams[manager].league}) or leave blank: ")
+        if team_name:
+            self.teams[manager].team_name = team_name
+        if league:
+            self.teams[manager].league = league
+        print(f" '{manager}'s' team has been updated.\n")
+
+    def delete_team(self):
+        manager = input("Enter manager name to delete: ")
+        if manager in self.teams:
+            del self.teams[manager]
+            print(f" Team managed by '{manager}' has been deleted.\n")
+        else:
+            print("Team not found.\n")
+
+
+def menu():
+    collection = CricketCollection()
+    while True:
+        print("\n**** Cricket Collection Manager ****")
+        print("1. Add a player")
+        print("2. List all players")
+        print("3. Update a player")
+        print("4. Deactivate a player")
+        print("5. Add a team")
+        print("6. List all teams")
+        print("7. Update a team")
+        print("8. Delete a team")
+        print("9. Exit\n")
+        choice = input("Choose an option (1-9): ")
+
+        if choice == '1':
+            collection.add_player()
+        elif choice == '2':
+            collection.list_players()
+        elif choice == '3':
+            collection.update_player()
+        elif choice == '4':
+            collection.deactivate_player()
+        elif choice == '5':
+            collection.add_team()
+        elif choice == '6':
+            collection.list_team()
+        elif choice == '7':
+            collection.update_team()
+        elif choice == '8':
+            collection.delete_team()
+        elif choice == '9':
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please try again.\n")
+
+
+# Run the menu
+menu()
