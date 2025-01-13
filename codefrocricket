@@ -1,8 +1,6 @@
-
-
 import json
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 class Player:
     def __init__(self, player_id, name, role, country):
@@ -143,7 +141,7 @@ class CricketCollection:
 
         team = self.teams[manager]
         if not team.players:
-            print(f"Team '{team.team_namw}' has no players assigned.\n")
+            print(f"Team '{team.team_name}' has no players assigned.\n")
         else:
             print(f"Players in team '{team.team_name}':")
             for player in team.players:
@@ -201,18 +199,51 @@ class CricketCollection:
                         league=team_data['league']
                     )
                     team.players = [p for p in self.players if p.player_id in team_data['players']]
-                    self.teams[team.team_name] = team
+                    self.teams[team.manager] = team
 
                     print("Data loaded successfully from JSON!")
         except Exception as e:
             print(f"Error loading JSON: {e}")
     
+    def save_json(self, file_path):
+        data = {
+            "players": [
+                {
+                    "player_id": player.player_id,
+                    "name": player.name,
+                    "role": player.role,
+                    "country": player.country,
+                    "is_active": player.is_active
+                }
+                for player in self.players
+            ],
+            "teams": [
+                {
+                    "manager": team.manager,
+                    "team_name": team.team_name,
+                    "league": team.league,
+                    "players": [player.player_id for player in team.players]
+                }
+                for team in self.teams.values()
+            ] 
+        }
+        with open(file_path,'w') as file :
+            json.dump(data, file,indent=4)
+        print(f"Data successfully saved into '{file_path}'.")
 
+    def visualize_players_by_country(self):
+        from collections import Counter
+        if not self.players:
+            print("No players available to visualize.\n")
+            return
+        countries = [player.country for player in self.players]
+        country_counts = Counter(countries)
 
+        plt.pie(country_counts.values(), labels=country_counts.keys(), autopct='%1.1f%%')
+        plt.title('Players by Country')
+        plt.show()
 
 # Load data from JSON
-
-
 
     def menu(self):
         while True:
@@ -229,10 +260,12 @@ class CricketCollection:
             print("10. Remove a Player from a Team")
             print("11. Filter Players by Role or Country")
             print("12. Load Data from JSON")
-            print("13. Exit\n")
+            print("13. Save Data from JSON")
+            print("14. Visualize Players by Country")
+            print("15. Save Exit\n")
 
             #user_type = input("Enter your role (Manager, Organizer, Enthusiast): ").lower()
-            ans = input("Choose an option (1-12): ")
+            ans = input("Choose an option (1-15): ")
 
             if ans == '1':
                 self.add_player()
@@ -260,6 +293,11 @@ class CricketCollection:
                 file_path = input("Enter JSON file path: ")
                 self.load_json(file_path)
             elif ans == '13':
+                file_path = input("Enter JSON file path : ")
+                self.save_json(file_path)  
+            elif ans == '14':
+                self.visualize_players_by_country()  
+            elif ans == '15':
                 print("Goodbye!")
                 break
             else:
