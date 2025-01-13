@@ -1,4 +1,5 @@
-# allows me to chose players to add to team
+new features like - reactivate - filter by role and country of player
+
 class Player:
     def __init__(self, player_id, name, role, country):
         self.player_id = player_id
@@ -82,6 +83,16 @@ class CricketCollection:
                 return
         print("Player not found or already inactive.\n")
 
+    def reactivate_player(self):
+        player_id = input("Enter Player ID to reactivate: ")
+        for player in self.players:
+            if player.player_id == player_id and not player.is_active:
+                player.is_active = True
+                print(f"Player '{player.name}' has been reactivated.\n")
+                return
+        print("Player not found or already active.\n")
+
+
     def add_team(self):
         manager = input("Enter Manager name: ")
         team_name = input("Enter team name: ")
@@ -147,7 +158,24 @@ class CricketCollection:
             print(f"Player with ID '{player_id}' has been removed from team '{team.team_name}'.\n")
         else:
             print(f"Player with ID '{player_id}' not found in team '{team.team_name}'.\n")
-        
+
+    def filter_players(self):
+        criteria = input("Filter by (role/country): ").lower()
+        if criteria not in ['role', 'country']:
+            print("Invalid criteria. Please choose 'role' or 'country'.\n")
+            return
+
+        value = input(f"Enter the {criteria} to filter by: ")
+        filtered_players = [player for player in self.players if getattr(player, criteria, "").lower() == value.lower()]
+
+        if not filtered_players:
+            print(f"No players found with {criteria} '{value}'.\n")
+        else:
+            print(f"Players with {criteria} '{value}':")
+            for player in filtered_players:
+                print(player)
+
+    
 
     def menu(self):
         while True:
@@ -156,39 +184,48 @@ class CricketCollection:
             print("2. List All Players")
             print("3. Update a Player")
             print("4. Deactivate a Player")
-            print("5. Add a Team")
-            print("6. List All Teams")
-            print("7. Assign a Player to a Team")
-            print("8. List Players in a Team")
-            print("9. Remove a Player from a Team")
-            print("10. Exit\n")
-            choice = input("Choose an option (1-10): ")
+            print("5. Reactivate a Player")
+            print("6. Add a Team")
+            print("7. List All Teams")
+            print("8. Assign a Player to a Team")
+            print("9. List Players in a Team")
+            print("10. Remove a Player from a Team")
+            print("11. Filter Players by Role or Country")
+            print("12. Exit\n")
 
-            if choice == '1':
+            user_type = input("Enter your role (Manager, Organizer, Enthusiast): ").lower()
+            ans = input("Choose an option (1-12): ")
+
+            if ans == '1':
                 self.add_player()
-            elif choice == '2':
+            elif ans == '2':
                 self.list_players()
-            elif choice == '3':
+            elif ans == '3' :
                 self.update_player()
-            elif choice == '4':
+            elif ans == '4' :
                 self.deactivate_player()
-            elif choice == '5':
+            elif ans == '5' :
+                self.reactivate_player()    
+            elif ans == '6' :
                 self.add_team()
-            elif choice == '6':
+            elif ans == '7' :
                 self.list_team()
-            elif choice == '7':
+            elif ans == '8':
                 self.assign_player_to_team()
-            elif choice == '8':
+            elif ans == '9' :
                 self.list_team_players()
-            elif choice == '9':
+            elif ans == '10' :
                 self.remove_player_from_team()
-            elif choice == '10':
+            elif ans == '11':
+                self.filter_players()
+            elif ans == '12':
                 print("Goodbye!")
                 break
             else:
-                print("Invalid choice. Please try again.\n")
+                print("Invalid choice or insufficient permissions. Please try again.\n")
 
 
 # Run the menu
 collection = CricketCollection()
 collection.menu()
+
