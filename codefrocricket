@@ -1,4 +1,8 @@
-new features like - reactivate - filter by role and country of player
+
+
+import json
+import pandas as pd
+
 
 class Player:
     def __init__(self, player_id, name, role, country):
@@ -175,7 +179,40 @@ class CricketCollection:
             for player in filtered_players:
                 print(player)
 
+    def load_json(self,file_path):
+        try:
+            with open(file_path, 'r') as file:
+                data = json.load(file)
+
+                for player_data in data.get('players', []):
+                    player = Player(
+                        player_id=player_data['player_id'],
+                        name=player_data['name'],
+                        role=player_data['role'],
+                        country=player_data['country']
+                    )
+                    player.is_active = player_data['is_active']
+                    self.players.append(player)
+
+                for team_data in data.get('teams', []):
+                    team = Team(
+                        manager=team_data['manager'],
+                        team_name=team_data['team_name'],
+                        league=team_data['league']
+                    )
+                    team.players = [p for p in self.players if p.player_id in team_data['players']]
+                    self.teams[team.team_name] = team
+
+                    print("Data loaded successfully from JSON!")
+        except Exception as e:
+            print(f"Error loading JSON: {e}")
     
+
+
+
+# Load data from JSON
+
+
 
     def menu(self):
         while True:
@@ -191,9 +228,10 @@ class CricketCollection:
             print("9. List Players in a Team")
             print("10. Remove a Player from a Team")
             print("11. Filter Players by Role or Country")
-            print("12. Exit\n")
+            print("12. Load Data from JSON")
+            print("13. Exit\n")
 
-            user_type = input("Enter your role (Manager, Organizer, Enthusiast): ").lower()
+            #user_type = input("Enter your role (Manager, Organizer, Enthusiast): ").lower()
             ans = input("Choose an option (1-12): ")
 
             if ans == '1':
@@ -219,6 +257,9 @@ class CricketCollection:
             elif ans == '11':
                 self.filter_players()
             elif ans == '12':
+                file_path = input("Enter JSON file path: ")
+                self.load_json(file_path)
+            elif ans == '13':
                 print("Goodbye!")
                 break
             else:
@@ -226,6 +267,6 @@ class CricketCollection:
 
 
 # Run the menu
-collection = CricketCollection()
-collection.menu()
-
+if __name__ == "__main__":
+    collection = CricketCollection()
+    collection.menu()
