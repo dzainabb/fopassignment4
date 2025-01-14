@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-from cricket_collection import CricketCollection, Player, Team  # Import your existing classes
+from cricket_collection import CricketCollection, Player, Team  # Import your existing classes - make sure saved as cricket_collection
 
 
 class CricketCollectionGUI:
