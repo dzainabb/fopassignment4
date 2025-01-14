@@ -1,15 +1,17 @@
-
-  import json
+#code with documentation
+import json
 import pandas as pd
 import matplotlib.pyplot as plt
-
+# define Player
 class Player:
     def __init__(self, player_id, name, role, country):
         self.player_id = player_id
         self.name = name
-        self.role = role  # Example roles: Batsman, Bowler, All-rounder, Wicketkeeper
-        self.country = country
+        self.role = role
+        self.country = country  # home country for the player - eg England for Ben Stokes
         self.is_active = True
+     #Initialise with attributes like player_id, name, role, country
+     #Set is_active to True by default
 
     def __str__(self):
         status = "Active" if self.is_active else "Inactive"
@@ -19,18 +21,17 @@ class Player:
                 f"Country: {self.country}\n"
                 f"Status: {status}")
 
-
-class Team:
+class Team: # define Team - represents a cricket team with attributes with manager, team_name, league, and list of players
     def __init__(self, manager, team_name, league):
         self.manager = manager
         self.team_name = team_name
         self.league = league
         self.players = []
-
-    def add_player(self,player):
+        #Start an empty list for players
+    def add_player(self,player):   #add player to team
         self.players.append(player)
         
-    def remove_player(self,player_id):
+    def remove_player(self,player_id): #removes player from team
         self.players = [player for player in self.players if player.player_id!= player_id]    #make sure player_id is that of player we want to remove from the to team
 
     def __str__(self):
@@ -43,9 +44,13 @@ class CricketCollection:
     def __init__(self):
         self.players = []
         self.teams = {}
-
-    def add_player(self):
+        #empty list and dictionary 
+    
+    def add_player(self):  #method to add player to collections - collects details from input
         player_id = input("Enter Player ID: ")
+        if any(p.player_id == player_id for p in self.players):
+            print("A player with this ID already exists. Please use a unique ID.")
+            return
         name = input("Enter Player Name: ")
         role = input("Enter Player Role (e.g., Batsman, Bowler, All-rounder): ")
         country = input("Enter country of origin: ")
@@ -53,20 +58,20 @@ class CricketCollection:
         self.players.append(player)
         print(f"Player '{name}' has been added to the collection.\n")
 
-    def list_players(self):
+    def list_players(self): # lists all exisiting players in the collection 
         if not self.players:
             print("No players in the collection.\n")
         else:
             for player in self.players:
                 print(player)
 
-    def update_player(self):
+    def update_player(self):  #allows user to change player details and update them - eg if had put it in wrong during add_player can change it her by inputing ID
         player_id = input("Enter Player ID to update: ")
         for player in self.players:
             if player.player_id == player_id:
                 name = input(f"Enter new name (current: {player.name}) or leave blank: ")
                 role = input(f"Enter new role (current: {player.role}) or leave blank: ")
-                country = input(f"Enter new country (current: {player.country}) or leave blank: ")
+                country = input(f"Enter new country (current: {player.country}) or leave blank: ")  # do not have to change all details
                 if name:
                     player.name = name
                 if role:
@@ -77,16 +82,16 @@ class CricketCollection:
                 return
         print("Player not found.\n")
 
-    def deactivate_player(self):
+    def deactivate_player(self):  #changes players status to 'inactive'
         player_id = input("Enter Player ID to deactivate: ")
         for player in self.players:
             if player.player_id == player_id and player.is_active:
-                player.is_active = False
+                player.is_active = False    #changes Boolean 
                 print(f"Player '{player.name}' has been deactivated.\n")
                 return
         print("Player not found or already inactive.\n")
 
-    def reactivate_player(self):
+    def reactivate_player(self):  # will reactivate a player asks for input of unique id
         player_id = input("Enter Player ID to reactivate: ")
         for player in self.players:
             if player.player_id == player_id and not player.is_active:
@@ -96,7 +101,7 @@ class CricketCollection:
         print("Player not found or already active.\n")
 
 
-    def add_team(self):
+    def add_team(self):   #adds new team to the collection - makes manager name the key so has to be unique - should've done an manager ID number
         manager = input("Enter Manager name: ")
         team_name = input("Enter team name: ")
         league = input("Enter league: ")
@@ -107,7 +112,7 @@ class CricketCollection:
         self.teams[manager] = team
         print(f" Team '{team_name}' has been added.\n")
 
-    def list_team(self):
+    def list_team(self):   #lists all exisiting teams with relevent informarion 
         if not self.teams:
             print("No teams in the collection.\n")
         else:
@@ -115,7 +120,7 @@ class CricketCollection:
                 print(team)
 
 
-    def assign_player_to_team(self):
+    def assign_player_to_team(self):   #assigns player to a team - manager name is the key
         manager = input("Enter the manager name to assign a player: ")
         if manager not in self.teams:
             print("Team not found.\n")
@@ -124,17 +129,17 @@ class CricketCollection:
         player_id = input("Enter the Player ID to assign: ")
         player = next((p for p in self.players if p.player_id == player_id and p.is_active), None)
         if not player:
-            print("Player not found or inactive.\n")
+            print("Player not found or inactive.\n")   # ensures inactive players arent in a team
             return
 
-        team = self.teams[manager]
+        team = self.teams[manager]    #error handling - this makes sure player is only in one team at once
         if player in team.players:
             print(f"Player '{player.name}' is already in the team '{manager}'.\n")
         else:
-            team.add_player(player)
+            team.add_player(player)   #if avalaible they will be assigned
             print(f"Player '{player.name}' has been assigned to team '{manager}'.\n")
 
-    def list_team_players(self):
+    def list_team_players(self):  # lists players in chosen managers team
         manager = input("Enter the manager name to list its players: ")
         if manager not in self.teams:
             print("Team not found.\n")
@@ -142,18 +147,18 @@ class CricketCollection:
 
         team = self.teams[manager]
         if not team.players:
-            print(f"Team '{team.team_name}' has no players assigned.\n")
+            print(f"Team '{team.team_name}' has no players assigned.\n")   #error handling if no players been assigned yett
         else:
             print(f"Players in team '{team.team_name}':")
             for player in team.players:
                 print(player)
 
-    def remove_player_from_team(self):
+    def remove_player_from_team(self):   #remove players from team - could be because they are inactive or injured or have retired ect
         manager = input("Enter the team name to remove a player from: ")
         if manager not in self.teams:
             print("Team not found.\n")
             return
-
+        
         player_id = input("Enter the Player ID to remove: ")
         team = self.teams[manager]
         if any(player.player_id == player_id for player in team.players):
@@ -162,13 +167,13 @@ class CricketCollection:
         else:
             print(f"Player with ID '{player_id}' not found in team '{team.team_name}'.\n")
 
-    def filter_players(self):
+    def filter_players(self):   #filters playters by role or country - uses input to chose what to filter by
         criteria = input("Filter by (role/country): ").lower()
         if criteria not in ['role', 'country']:
             print("Invalid criteria. Please choose 'role' or 'country'.\n")
             return
 
-        value = input(f"Enter the {criteria} to filter by: ")
+        value = input(f"Enter the {criteria} to filter by: ")     #will list all players in speciifc catergory
         filtered_players = [player for player in self.players if getattr(player, criteria, "").lower() == value.lower()]
 
         if not filtered_players:
@@ -178,13 +183,13 @@ class CricketCollection:
             for player in filtered_players:
                 print(player)
 
-    def load_json(self,file_path):
+    def load_json(self,file_path):   #load players and team fro a json file - asks for a input of the file path - works both with relative path 
         try:
             with open(file_path, 'r') as file:
                 data = json.load(file)
                 print("Players in JSON:", data.get('players', []))   #debug - ensures json file has data that is valid 
 
-                self.player = []
+                self.player = []     #json structure is same as Player 
                 for player_data in data.get('players', []):
                     player = Player(
                         player_id=player_data['player_id'],
@@ -196,7 +201,7 @@ class CricketCollection:
                     self.players.append(player)
                 print("Loaded players:", [str(p) for p in self.players])  # Debug
                 self.team = {}
-                for team_data in data.get('teams', []):
+                for team_data in data.get('teams', []):   #same as Team class
                     team = Team(
                         manager=team_data['manager'],
                         team_name=team_data['team_name'],
@@ -208,9 +213,9 @@ class CricketCollection:
                 print("Loaded teams:", {k: str(v) for k, v in self.teams.items()})  # Debug
                 print("Data loaded successfully from JSON!")
         except Exception as e:
-            print(f"Error loading JSON: {e}")
+            print(f"Error loading JSON: {e}")   #error handling will tell user where they've messed up
     
-    def save_json(self, file_path):
+    def save_json(self, file_path):   #saved current players and team to json file - again input a filepath to save
         data = {
             "players": [
                 {
@@ -236,10 +241,10 @@ class CricketCollection:
             json.dump(data, file,indent=4)
         print(f"Data successfully saved into '{file_path}'.")
 
-    def visualize_players_by_country(self):
+    def visualise_players_by_country(self):   # make pie chart on countries - will show distribution of players by country of origin - use of matplotlib
         from collections import Counter
-        if not self.players:
-            print("No players available to visualize.\n")
+        if not self.players:   #check if any players to make pie chart about
+            print("No players available to visualise.\n")
             return
         countries = [player.country for player in self.players]
         country_counts = Counter(countries)
@@ -247,10 +252,44 @@ class CricketCollection:
         plt.pie(country_counts.values(), labels=country_counts.keys(), autopct='%1.1f%%')
         plt.title('Players by Country')
         plt.show()
+   
+    def create_pivot_table(self): # to visualise all collection as a whole
+        # Check if there are players
+        if not self.players:
+            print("No players available to create a pivot table.\n")
+            return
+        # Prepare data for pivot table
+        player_data = [
+            {
+                "Player ID": player.player_id,
+                "Name": player.name,
+                "Role": player.role,
+                "Country": player.country,
+                "Status": "Active" if player.is_active else "Inactive"
+            }
+            for player in self.players
+        ]
+        # Convert to DataFrame
+        df = pd.DataFrame(player_data)
+        # Display the raw data
+        print("\nPlayer Data:")
+        print(df)
 
-# Load data from JSON
+        # Create a pivot table summarising player count by Role and Country
+        pivot = pd.pivot_table(
+            df, 
+            values="Player ID",  # Value to aggregate
+            index="Role",        # Rows
+            columns="Country",   # Columns
+            aggfunc="count",     # Aggregation function
+            fill_value=0         # Fill missing values with 0
+        )
 
-    def menu(self):
+        # Display the pivot table
+        print("\nPivot Table (Players by Role and Country):")
+        print(pivot)
+
+    def menu(self):   # menu for all features
         while True:
             print("\n**** Cricket Collection Manager ****")
             print("1. Add a Player")
@@ -265,12 +304,12 @@ class CricketCollection:
             print("10. Remove a Player from a Team")
             print("11. Filter Players by Role or Country")
             print("12. Load Data from JSON")
-            print("13. Save Data from JSON")
-            print("14. Visualize Players by Country")
-            print("15. Save Exit\n")
+            print("13. Save Data to JSON")
+            print("14. Visualise Players by Country")
+            print("15. Create Pivot Table for Players\n")
+            print("16. Exit\n")
 
-            #user_type = input("Enter your role (Manager, Organizer, Enthusiast): ").lower()
-            ans = input("Choose an option (1-15): ")
+            ans = input("Choose an option (1-16): ")   
 
             if ans == '1':
                 self.add_player()
@@ -295,21 +334,23 @@ class CricketCollection:
             elif ans == '11':
                 self.filter_players()
             elif ans == '12':
-                file_path = input("Enter JSON file path: ")
+                file_path = input("Enter JSON file path: ")   #asks to enter file path as it is subjective
                 self.load_json(file_path)
             elif ans == '13':
                 file_path = input("Enter JSON file path : ")
                 self.save_json(file_path)  
             elif ans == '14':
-                self.visualize_players_by_country()  
+                self.visualise_players_by_country()  
             elif ans == '15':
+                self.create_pivot_table()
+            elif ans == '16':
                 print("Goodbye!")
                 break
             else:
                 print("Invalid choice or insufficient permissions. Please try again.\n")
 
-
 # Run the menu
 if __name__ == "__main__":
     collection = CricketCollection()
     collection.menu()
+
