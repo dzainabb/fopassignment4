@@ -1,0 +1,116 @@
+import tkinter as tk
+from tkinter import messagebox, simpledialog
+from cricket_collection import CricketCollection, Player, Team  # Import your existing classes
+
+
+class CricketCollectionGUI:
+    def __init__(self, root, collection):
+        self.root = root
+        self.collection = collection
+
+        # Set window title and size
+        root.title("Cricket Collection Manager")
+        root.geometry("500x400")
+
+        # Create a title label
+        title_label = tk.Label(root, text="Cricket Collection Manager", font=("Arial", 16, "bold"))
+        title_label.pack(pady=10)
+
+        # Create buttons for various actions
+        tk.Button(root, text="Add Player", command=self.add_player, width=20).pack(pady=5)
+        tk.Button(root, text="List Players", command=self.list_players, width=20).pack(pady=5)
+        tk.Button(root, text="Update Player", command=self.update_player, width=20).pack(pady=5)
+        tk.Button(root, text="Deactivate Player", command=self.deactivate_player, width=20).pack(pady=5)
+        tk.Button(root, text="Reactivate Player", command=self.reactivate_player, width=20).pack(pady=5)
+        tk.Button(root, text="Add Team", command=self.add_team, width=20).pack(pady=5)
+        tk.Button(root, text="List Teams", command=self.list_teams, width=20).pack(pady=5)
+        tk.Button(root, text="Exit", command=root.quit, width=20, bg="red", fg="white").pack(pady=20)
+
+    def add_player(self):
+        # Prompt user for player details
+        player_id = simpledialog.askstring("Input", "Enter Player ID:")
+        name = simpledialog.askstring("Input", "Enter Player Name:")
+        role = simpledialog.askstring("Input", "Enter Player Role (e.g., Batsman):")
+        country = simpledialog.askstring("Input", "Enter Player Country:")
+
+        if player_id and name and role and country:
+            player = Player(player_id, name, role, country)
+            self.collection.add_player(player)
+            messagebox.showinfo("Success", f"Player '{name}' added successfully!")
+        else:
+            messagebox.showerror("Error", "All fields are required!")
+
+    def list_players(self):
+        # Show list of players
+        if not self.collection.players:
+            messagebox.showinfo("Players", "No players available.")
+        else:
+            player_info = "\n".join(self.collection.list_players())
+            messagebox.showinfo("Players", player_info)
+
+    def update_player(self):
+        # Prompt user for player ID and details to update
+        player_id = simpledialog.askstring("Input", "Enter Player ID to update:")
+        player = next((p for p in self.collection.players if p.player_id == player_id), None)
+        if player:
+            name = simpledialog.askstring("Input", f"Enter new name (current: {player.name}) or leave blank:")
+            role = simpledialog.askstring("Input", f"Enter new role (current: {player.role}) or leave blank:")
+            country = simpledialog.askstring("Input", f"Enter new country (current: {player.country}) or leave blank:")
+
+            if name:
+                player.name = name
+            if role:
+                player.role = role
+            if country:
+                player.country = country
+
+            messagebox.showinfo("Success", f"Player '{player_id}' updated!")
+        else:
+            messagebox.showerror("Error", "Player not found!")
+
+    def deactivate_player(self):
+        # Deactivate player based on ID
+        player_id = simpledialog.askstring("Input", "Enter Player ID to deactivate:")
+        player = next((p for p in self.collection.players if p.player_id == player_id), None)
+        if player:
+            player.is_active = False
+            messagebox.showinfo("Success", f"Player '{player.name}' deactivated!")
+        else:
+            messagebox.showerror("Error", "Player not found!")
+
+    def reactivate_player(self):
+        # Reactivate player based on ID
+        player_id = simpledialog.askstring("Input", "Enter Player ID to reactivate:")
+        player = next((p for p in self.collection.players if p.player_id == player_id), None)
+        if player:
+            player.is_active = True
+            messagebox.showinfo("Success", f"Player '{player.name}' reactivated!")
+        else:
+            messagebox.showerror("Error", "Player not found!")
+
+    def add_team(self):
+        # Prompt user for team details
+        manager = simpledialog.askstring("Input", "Enter Manager Name:")
+        team_name = simpledialog.askstring("Input", "Enter Team Name:")
+        league = simpledialog.askstring("Input", "Enter League:")
+
+        if manager and team_name and league:
+            team = Team(manager, team_name, league)
+            self.collection.add_team(team)
+            messagebox.showinfo("Success", f"Team '{team_name}' added successfully!")
+        else:
+            messagebox.showerror("Error", "All fields are required!")
+
+    def list_teams(self):
+        # Show list of teams
+        if not self.collection.teams:
+            messagebox.showinfo("Teams", "No teams available.")
+        else:
+            team_info = "\n".join(self.collection.list_teams())
+            messagebox.showinfo("Teams", team_info)
+
+if __name__ == "__main__":
+    collection = CricketCollection()  # Create CricketCollection instance
+    root = tk.Tk()  # Create Tkinter root window
+    app = CricketCollectionGUI(root, collection)  # Create app instance
+    root.mainloop()  # Start the Tkinter event loop
